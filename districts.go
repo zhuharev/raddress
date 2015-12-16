@@ -5,16 +5,43 @@ type District struct {
 	Name string
 }
 
-type Districts []District
-
-func (d Districts) Childs(id int) (rs Regions) {
-	for _, v := range RussianRegions {
-		if v.DistrictId == id {
+func (d District) Childs() (rs Regions) {
+	for _, v := range Loc.Data.Subjects {
+		if v.Disid == d.Id {
 			rs = append(rs, v)
 		}
 	}
 	return
 }
+
+/*func (r Region) Localities() (rs Regions) {
+	for _, v := range Locality.Data.Locality {
+		if v.Parentguid == r.Aoguid {
+			rs = append(rs, v)
+		}
+	}
+	return
+}*/
+
+type Districts []District
+
+func (d Districts) Subjects(id int) (rs Regions) {
+	for _, v := range Loc.Data.Subjects {
+		if v.Regioncode == id {
+			rs = append(rs, v)
+		}
+	}
+	return
+}
+
+/*func (d District) Localities(regionId int) (rs Regions) {
+	for _, v := range Loc.Data.Locality {
+		if v.Regioncode == regionId && v.Parentguid == v.Aoguid {
+			rs = append(rs, v)
+		}
+	}
+	return
+}*/
 
 var (
 	districts []string = []string{

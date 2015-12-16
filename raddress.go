@@ -1,8 +1,6 @@
 package raddress
 
 import (
-	"encoding/json"
-	"fmt"
 	"github.com/ungerik/go-dry"
 )
 
@@ -14,24 +12,24 @@ var (
 )
 
 type Region struct {
+	Aoguid     string `json:"aoguid"`
+	Disid      int    `json:"disid,string"`
 	Name       string `json:"name"`
-	RegionCode int    `json:"rid"`
-	DistrictId int    `json:"did"`
+	Okato      string `json:"okato"`
+	Parentguid string `json:"parentguid"`
+	Regioncode int    `json:"regioncode,string"`
+}
+
+func (r Region) Childs() (res Regions) {
+	for _, v := range Loc.Data.Locality {
+		if v.Parentguid == r.Aoguid {
+			res = append(res, v)
+		}
+	}
+	return
 }
 
 type Regions []Region
-
-func init() {
-	if BinDataEnabled {
-		var regs []Region
-		fmt.Println(string(MustAsset("regions.json")))
-		e := json.Unmarshal(MustAsset("regions.json"), &regs)
-		if e != nil {
-			panic(e)
-		}
-		RussianRegions = Regions(regs)
-	}
-}
 
 func Load(path ...string) error {
 	p := DefaultRegionsPath

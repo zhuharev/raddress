@@ -6,7 +6,7 @@ import (
 
 var (
 	RussianRegions     Regions
-	DefaultRegionsPath = "regions.json"
+	DefaultRegionsPath = "data/regions.json"
 
 	BinDataEnabled = true
 )

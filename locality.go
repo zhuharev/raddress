@@ -53,6 +53,9 @@ func fix(name string) string {
 			name = "Республика " + name
 		}
 	}
+	if strings.HasPrefix(strings.ToLower(name), "москва") {
+		name = "Москва и область"
+	}
 	return name
 }
 
@@ -86,4 +89,14 @@ func (l Locality) RegionName(id int) string {
 		}
 	}
 	return ""
+}
+
+func (l Locality) RegionId(name string) int {
+	fn := strings.Split(name, " ")[0]
+	for _, v := range l.Data.Subjects {
+		if strings.HasPrefix(v.Name, fn) {
+			return v.Regioncode
+		}
+	}
+	return 0
 }

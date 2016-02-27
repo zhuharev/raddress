@@ -7,6 +7,7 @@ import (
 	"github.com/Unknwon/com"
 	"github.com/fatih/color"
 	"strings"
+	"sync"
 )
 
 var csvApi *csvapi
@@ -108,7 +109,20 @@ func GetRegion(id int) Item {
 	return Item{}
 }
 
+var (
+	mx     sync.Mutex
+	ccache = map[string][]Item{}
+)
+
 func GetRegionCities(region string) (res []Item) {
+	mx.Lock()
+	if res, ok := ccache[region]; ok {
+		mx.Unlock()
+		return res
+	} else {
+		mx.Unlock()
+	}
+
 	region = strings.ToLower(region)
 	region = strings.TrimSuffix(region, " район")
 	fmt.Println(region)
@@ -116,10 +130,33 @@ func GetRegionCities(region string) (res []Item) {
 		if strings.HasPrefix(strings.ToLower(v.Name), region) {
 			for _, city := range csvApi.cities {
 				if city.RegionId == v.Id {
-					res = append(res, city)
+					if hasStr(city.Name, allowedCities) {
+						res = append(res, city)
+					}
 				}
 			}
 		}
 	}
+	mx.Lock()
+	ccache[region] = res
+	mx.Unlock()
 	return
+}
+
+var allowedCities []string
+
+func AllowCities(arr []string) {
+	allowedCities = arr
+}
+
+func hasStr(str string, arr []string) bool {
+	if arr == nil {
+		return true
+	}
+	for _, v := range arr {
+		if strings.ToLower(v) == strings.ToLower(str) {
+			return true
+		}
+	}
+	return false
 }

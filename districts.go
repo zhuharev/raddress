@@ -8,7 +8,9 @@ type District struct {
 func (d District) Childs() (rs Regions) {
 	for _, v := range Loc.Data.Subjects {
 		if v.Disid == d.Id {
-			rs = append(rs, v)
+			if Loc.Cities(v.Regioncode) != nil {
+				rs = append(rs, v)
+			}
 		}
 	}
 	return
